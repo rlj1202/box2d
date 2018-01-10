@@ -275,7 +275,8 @@ func (world *B2World) DestroyBody(b *B2Body) {
 	world.M_bodyCount--
 }
 
-func (world *B2World) CreateJoint(def *B2JointDef) B2JointInterface {
+// parameter 'def' should be pointer to joint def type.(*B2PrismaticJointDef, for example)
+func (world *B2World) CreateJoint(def B2JointDefInterface) B2JointInterface {
 	B2Assert(world.IsLocked() == false)
 	if world.IsLocked() {
 		return nil
@@ -312,11 +313,11 @@ func (world *B2World) CreateJoint(def *B2JointDef) B2JointInterface {
 	}
 	j.GetBodyB().M_jointList = j.GetEdgeB()
 
-	bodyA := def.BodyA
-	bodyB := def.BodyB
+	bodyA := def.GetBodyA()
+	bodyB := def.GetBodyB()
 
 	// If the joint prevents collisions, then flag any contacts for filtering.
-	if def.CollideConnected == false {
+	if def.IsCollideConnected() == false {
 		edge := bodyB.GetContactList()
 		for edge != nil {
 			if edge.Other == bodyA {
